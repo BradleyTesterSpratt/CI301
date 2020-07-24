@@ -1,6 +1,6 @@
 # CI301
 
 
-*to run automated tests* \n
-npm install \n
-npm run test
+# to run automated tests
+- npm install
+- npm run test

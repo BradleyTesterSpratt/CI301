@@ -32,13 +32,13 @@ describe("Unit", function() {
     });
 
     it("should not reach a distant destination in a single movement", function() {
-      unit.setDestination({x:2, y:1});
+      unit.setDestination({x:3, y:1});
       unit.performAction();
       expect(unit.position).not.toEqual({x:0, y:0});
-      expect(unit.position).not.toEqual({x:2, y:1});
+      expect(unit.position).not.toEqual({x:3, y:1});
       expect(unit.state).toEqual("moving");
       unit.performAction();
-      expect(unit.position).toEqual({x:2, y:1});
+      expect(unit.position).toEqual({x:3, y:1});
       expect(unit.state).toBe("idle");
     });
 
@@ -107,6 +107,10 @@ describe("Unit", function() {
       updateAll();
       expect(unit).not.toBeInRange();
       enemy.setDestination({x:1, y:-1});
+      updateAll();
+      expect(unit).not.toBeInRange();
+      updateAll();
+      expect(unit).not.toBeInRange();
       updateAll();
       expect(unit).toBeInRange();
     });

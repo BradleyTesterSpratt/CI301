@@ -2,14 +2,18 @@ describe("Unit", function() {
   var Unit = require('../lib/Unit');
   var unit;
   var enemy;
+  var units;
+  
+  //use this to simulate the update loop.
+  var updateAll = function() {
+    units.forEach(unit => {
+      unit.performAction();
+    });
+  }
 
   describe("setDestination", function() {
 
     beforeEach(function() {
-      unit = new Unit("idle", {x:0, y:0});
-    });
-  
-    afterEach(function() {
       unit = new Unit("idle", {x:0, y:0});
     });
     
@@ -49,11 +53,7 @@ describe("Unit", function() {
     beforeEach(function() {
       unit = new Unit("idle", {x:0, y:0});
       enemy = new Unit("idle", {x:1, y:0});
-    });
-  
-    afterEach(function() {
-      unit = new Unit("idle", {x:0, y:0});
-      enemy = new Unit("idle", {x:1, y:0});
+      units = [unit, enemy];
     });
 
     it("should attack an adjacent enemy succesfully", function() {
@@ -93,6 +93,24 @@ describe("Unit", function() {
       expect(enemy.state).toBe("underAttack");
     });
 
+    // it("should continue attacking until the enemy is dead", function() {
+    //   unit.setTarget(enemy);
+    // });
+
+    it("should travel to the enemy's new position and attack if the enemy moves", function() {
+      unit.setTarget(enemy);
+      updateAll();
+      expect(unit).toBeInRange();
+      enemy.setDestination({x:4, y:2});
+      updateAll();
+      expect(unit).not.toBeInRange();
+      updateAll();
+      expect(unit).not.toBeInRange();
+      enemy.setDestination({x:1, y:-1});
+      updateAll();
+      expect(unit).toBeInRange();
+    });
+    
     // it("should not cause the unit to overlap the enemy", function() {
 
     // });

@@ -12,4 +12,18 @@ beforeEach(function () {
       };
     }
   });
+
+  jasmine.addMatchers({
+    toBeInRange: function () {
+       return {
+         compare: function (actual, expected) {
+           var unit = actual;
+
+           return {
+             pass: unit.pointRangeCheck("x") && unit.pointRangeCheck("y")
+           }
+        }
+      };
+    }
+  });
 });

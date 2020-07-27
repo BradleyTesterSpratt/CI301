@@ -48,7 +48,7 @@ describe("Unit", function() {
     });
 
     it("should not be able to traverse an impassible space", function() {
-      map.setTerrain(new Terrain({x:-1, y:-1}));
+      map.addTerrain(new Terrain({x:-1, y:-1}));
       unit.setDestination({x:-1, y:-1});
       updateAll();
       expect(unit.position).not.toEqual({x:-1, y:-1});
@@ -75,6 +75,8 @@ describe("Unit", function() {
     });
 
     it("should move closer to the enemy if it is not adjacent", function() {
+      // test is failiing as when the enemy is created here, 
+      // it is not "moving" so original position remains non-traversable.
       enemy.position = ({x:2, y:0});
       unit.setTarget(enemy);
       updateAll();
@@ -84,6 +86,8 @@ describe("Unit", function() {
     });
 
     it("should attack the enemy once in range", function() {
+      // test is failiing as when the enemy is created here, 
+      // it is not "moving" so original position remains non-traversable.
       enemy.position = ({x:2, y:0});
       unit.setTarget(enemy);
       updateAll();
@@ -124,6 +128,8 @@ describe("Unit", function() {
     });
     
     it("should not cause the unit to overlap the enemy", function() {
+      // test is failiing as when the enemy is created here, 
+      // it is not "moving" so original position remains non-traversable.
       enemy.position = {x:2, y:0};
       unit.setTarget(enemy);
       expect(unit).not.toBeInRange();

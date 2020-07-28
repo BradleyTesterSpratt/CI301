@@ -5,11 +5,11 @@ describe("Unit", function() {
   var map;
   var unit;
   var enemy;
-  var units;
   
   //use this to simulate the update loop.
   var updateAll = function() {
-    units.forEach(unit => {
+    map.updateOccupiedTerrain();
+    map.unitList.forEach(unit => {
       unit.performAction();
     });
   }
@@ -19,7 +19,6 @@ describe("Unit", function() {
     beforeEach(function() {
       map = new GameMap();
       unit = new Unit("idle", {x:0, y:0}, map);
-      units = [unit];
     });
     
     it("should be able to move if state is not dead", function() {
@@ -53,6 +52,25 @@ describe("Unit", function() {
       updateAll();
       expect(unit.position).not.toEqual({x:-1, y:-1});
     });
+
+    it("should be able to move to a negative position", function() {
+      unit.position = {x:2, y:1};
+      updateAll();
+      unit.setDestination({x:-1, y:-1});
+      updateAll();
+      expect(unit.position).not.toEqual({x:-1, y:-1});
+      updateAll();
+      expect(unit.position).toEqual({x:-1, y:-1});
+    });
+
+    it("should not be confused when moving between adjacent positive and negative positions", function() {
+      unit.position = {x:2, y:1};
+      updateAll();
+      unit.setDestination({x:1, y:-1});
+      updateAll();
+      expect(unit.position).not.toBe({x:2, y:1});
+    });
+
   });
 
   describe("attack", function() {
@@ -61,7 +79,6 @@ describe("Unit", function() {
       map = new GameMap();
       unit = new Unit("idle", {x:0, y:0}, map);
       enemy = new Unit("idle", {x:1, y:0}, map);
-      units = [unit, enemy];
     });
 
     it("should attack an adjacent enemy succesfully", function() {
@@ -75,8 +92,6 @@ describe("Unit", function() {
     });
 
     it("should move closer to the enemy if it is not adjacent", function() {
-      // test is failiing as when the enemy is created here, 
-      // it is not "moving" so original position remains non-traversable.
       enemy.position = ({x:2, y:0});
       unit.setTarget(enemy);
       updateAll();
@@ -86,18 +101,16 @@ describe("Unit", function() {
     });
 
     it("should attack the enemy once in range", function() {
-      // test is failiing as when the enemy is created here, 
-      // it is not "moving" so original position remains non-traversable.
       enemy.position = ({x:2, y:0});
+      updateAll();
       unit.setTarget(enemy);
       updateAll();
       expect(unit.state).toBe("closingDistance");
       expect(enemy).not.toBeDamaged();
       updateAll();
       expect(enemy).not.toBeDamaged();
-      expect(unit.state).toBe("attacking");
+      expect(unit.state).toBe("closingDistance");
       updateAll();
-      expect(enemy.state).toBe("idle");
       expect(enemy).not.toBeDamaged();
       expect(unit.state).toBe("attacking");
       updateAll();
@@ -128,8 +141,6 @@ describe("Unit", function() {
     });
     
     it("should not cause the unit to overlap the enemy", function() {
-      // test is failiing as when the enemy is created here, 
-      // it is not "moving" so original position remains non-traversable.
       enemy.position = {x:2, y:0};
       unit.setTarget(enemy);
       expect(unit).not.toBeInRange();

@@ -14,6 +14,38 @@ describe("Unit", function() {
     });
   }
 
+  describe("pointRangeCheck", function() {
+    beforeEach(function() {
+      map = new GameMap();
+      unit = new Unit("idle", {x:2, y:1}, map);
+    });
+
+    it("should return false if the target is not in range", function() {
+      enemy = new Unit("idle", {x:2, y:5}, map);
+      unit.setTarget(enemy);
+      expect(unit.pointRangeCheck("x")).toBe(true);
+      expect(unit.pointRangeCheck("y")).toBe(false);
+      expect(unit.inRange()).toBe(false);
+    });
+
+    it("should return true if the target is in range", function() {
+      enemy = new Unit("idle", {x:3, y:1}, map);
+      unit.setTarget(enemy);
+      expect(unit.pointRangeCheck("x")).toBe(true);
+      expect(unit.pointRangeCheck("y")).toBe(true);
+      expect(unit.inRange()).toBe(true);
+    });
+
+    it("should return false if the target is not in range and a point is negative", function() {
+      enemy = new Unit("idle", {x:1, y:-1}, map);
+      unit.setTarget(enemy);
+      expect(unit.pointRangeCheck("x")).toBe(true);
+      expect(unit.pointRangeCheck("y")).toBe(false);
+      expect(unit.inRange()).toBe(false);
+    });
+
+  });
+
   describe("setDestination", function() {
 
     beforeEach(function() {
@@ -47,7 +79,7 @@ describe("Unit", function() {
     });
 
     it("should not be able to traverse an impassible space", function() {
-      map.addTerrain(new Terrain({x:-1, y:-1}));
+      map.addTerrain(new Terrain({x:-1, y:-1}, false));
       unit.setDestination({x:-1, y:-1});
       updateAll();
       expect(unit.position).not.toEqual({x:-1, y:-1});
@@ -123,6 +155,7 @@ describe("Unit", function() {
     // });
 
     it("should travel to the enemy's new position and attack if the enemy moves", function() {
+      unit.debug = true;
       unit.setTarget(enemy);
       updateAll();
       expect(unit).toBeInRange();
@@ -138,6 +171,7 @@ describe("Unit", function() {
       expect(unit).not.toBeInRange();
       updateAll();
       expect(unit).toBeInRange();
+      updateAll();
     });
     
     it("should not cause the unit to overlap the enemy", function() {

@@ -150,12 +150,42 @@ describe("Unit", function() {
       expect(enemy.state).toBe("underAttack");
     });
 
-    // it("should continue attacking until the enemy is dead", function() {
-    //   unit.setTarget(enemy);
-    // });
+    it("should continue attacking until the enemy is dead", function() {
+      unit.setTarget(enemy);
+      updateAll();
+      expect(enemy.currentHP).toBe(5);
+      expect(unit.state).toBe("attacking");
+      updateAll();
+      expect(enemy.currentHP).toBe(4);
+      expect(unit.state).toBe("attacking");
+      updateAll();
+      expect(enemy.currentHP).toBe(4);
+      expect(unit.state).toBe("attacking");
+      updateAll();
+      expect(enemy.currentHP).toBe(3);
+      expect(unit.state).toBe("attacking");
+      updateAll();
+      expect(enemy.currentHP).toBe(3);
+      expect(unit.state).toBe("attacking");
+      updateAll();
+      expect(enemy.currentHP).toBe(2);
+      expect(unit.state).toBe("attacking");
+      updateAll();
+      expect(enemy.currentHP).toBe(2);
+      expect(unit.state).toBe("attacking");
+      updateAll();
+      expect(enemy.currentHP).toBe(1);
+      expect(unit.state).toBe("attacking");
+      updateAll();
+      expect(enemy.currentHP).toBe(1);
+      expect(unit.state).toBe("attacking");
+      updateAll();
+      expect(enemy.currentHP).toBe(0);
+      expect(unit.target).not.toBe(enemy);
+      expect(unit.state).toBe("idle");
+    });
 
     it("should travel to the enemy's new position and attack if the enemy moves", function() {
-      unit.debug = true;
       unit.setTarget(enemy);
       updateAll();
       expect(unit).toBeInRange();

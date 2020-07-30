@@ -1,2 +1,4 @@
 node_modules/
+libs/browserify/
+libs/bundle.js
 package-lock.json

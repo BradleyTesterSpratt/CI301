@@ -1,6 +1,6 @@
 describe("GameMap", function() {
-  var GameMap = require('../lib/GameMap');
-  var Terrain = require('../lib/Terrain');
+  var GameMap = require('../../src/logic/GameMap');
+  var Terrain = require('../../src/logic/Terrain');
   var map;
   var terrain;
 

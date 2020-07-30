@@ -1,8 +1,6 @@
-const Terrain = require("./Terrain");
-
-function Unit(state, position, map) {
+function Unit(position, map) {
   this.id;
-  this.state = state;
+  this.state = "idle";
   this.position = position;
   this.speed = 2;
   this.actionQueue = [];
@@ -150,3 +148,4 @@ Unit.prototype.receieveAttack = function(attackPower) {
 }
 
 module.exports = Unit;
+global.UnitClass = Unit;

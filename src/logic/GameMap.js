@@ -64,3 +64,4 @@ GameMap.prototype.updateOccupiedTerrain = function() {
 // }
 
 module.exports = GameMap;
+global.GameMapClass = GameMap;

@@ -17,3 +17,4 @@ Terrain.prototype.vacate = function() {
 }
 
 module.exports = Terrain;
+global.TerrainClass = Terrain;

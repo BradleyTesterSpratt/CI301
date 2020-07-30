@@ -1,4 +1,4 @@
-// const Terrain = require("./Terrain");
+const Terrain = require("./Terrain");
 
 function GameMap() {
   this.terrainList = [];

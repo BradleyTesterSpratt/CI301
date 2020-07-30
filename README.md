@@ -2,5 +2,7 @@
 
 
 # to run automated tests
-- npm install
-- npm run test
+- make test
+
+# to run the game in phaser
+- make build

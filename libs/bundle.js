@@ -1,8 +1,99 @@
-const Terrain = require("./Terrain");
+(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
+var terrain = require("../src/logic/Terrain");
+var unit = require("../src/logic/Unit");
+var gamemap = require("../src/logic/GameMap");
+},{"../src/logic/GameMap":2,"../src/logic/Terrain":3,"../src/logic/Unit":4}],2:[function(require,module,exports){
+// const Terrain = require("./Terrain");
 
-function Unit(state, position, map) {
+function GameMap() {
+  this.terrainList = [];
+  this.unitList = [];
+  // this.childMaps = [];
+}
+
+GameMap.prototype.addTerrain = function(terrain) {
+  this.terrainList.push(terrain);
+}
+
+GameMap.prototype.addUnit = function(unit) {
+  this.unitList.push(unit);
+  unit.id = this.unitList.length - 1;
+}
+
+GameMap.prototype.removeUnit = function(unit) {
+  this.unitList.splice(unit.id)
+}
+
+GameMap.prototype.getTerrainByPosition = function(position) {
+  var terrain = null;
+  this.terrainList.forEach(entry => {
+    if(entry.position.x == position.x && entry.position.y == position.y) {
+      terrain = entry;
+    };
+  });
+  return terrain != null ? terrain : null;
+}
+
+GameMap.prototype.updateOccupiedTerrain = function() {
+  this.terrainList.forEach(terrain => {
+    terrain.vacate();
+  });
+  this.unitList.forEach(unit => {
+    var terrain = this.getTerrainByPosition(unit.position);
+    if(terrain != null) {
+      terrain.occupy();
+    } else {
+      terrain = new Terrain(unit.position);
+      this.addTerrain(terrain);
+      terrain.occupy();
+    }
+  });
+}
+// GameMap.prototype.addChildMap = function(map) {
+//   this.childMaps.push(map);
+// }
+
+// GameMap.prototype.updateChildMaps = function(terrain, action) {
+//   this.childMaps.forEach(map => {
+//     // remove the terrain from the list
+//     // or add a copy of a new terrain to the list
+//   });
+// }
+
+// something like this for each team/player
+// function PlayerMap(map) {
+//   map.addChildMap(this); 
+//   this.terrainList = []
+//   for each terrain in the map.terrainList add a copy;
+
+// }
+
+module.exports = GameMap;
+
+},{}],3:[function(require,module,exports){
+function Terrain(position, traversable = true) {
+  this.cover = 0;
+  this.traversable = traversable;
+  this.position = position;
+  this.occupied = false
+  // something like this for player maps?
+  // this.visible = false;
+  // this.revelead = false;
+}
+
+Terrain.prototype.occupy = function() {
+  this.occupied = true;
+}
+
+Terrain.prototype.vacate = function() {
+  this.occupied = false;
+}
+
+module.exports = Terrain;
+},{}],4:[function(require,module,exports){
+function Unit(position, map) {
   this.id;
-  this.state = state;
+  this.state = "idle";
   this.position = position;
   this.speed = 2;
   this.actionQueue = [];
@@ -150,3 +241,4 @@ Unit.prototype.receieveAttack = function(attackPower) {
 }
 
 module.exports = Unit;
+},{}]},{},[1]);

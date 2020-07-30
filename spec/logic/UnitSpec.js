@@ -1,7 +1,7 @@
 describe("Unit", function() {
-  var Unit = require('../lib/Unit');
-  var GameMap = require('../lib/GameMap');
-  var Terrain = require('../lib/Terrain');
+  var Unit = require('../../src/logic/Unit');
+  var GameMap = require('../../src/logic/GameMap');
+  var Terrain = require('../../src/logic/Terrain');
   var map;
   var unit;
   var enemy;
@@ -17,11 +17,11 @@ describe("Unit", function() {
   describe("pointRangeCheck", function() {
     beforeEach(function() {
       map = new GameMap();
-      unit = new Unit("idle", {x:2, y:1}, map);
+      unit = new Unit({x:2, y:1}, map);
     });
 
     it("should return false if the target is not in range", function() {
-      enemy = new Unit("idle", {x:2, y:5}, map);
+      enemy = new Unit({x:2, y:5}, map);
       unit.setTarget(enemy);
       expect(unit.pointRangeCheck("x")).toBe(true);
       expect(unit.pointRangeCheck("y")).toBe(false);
@@ -29,7 +29,7 @@ describe("Unit", function() {
     });
 
     it("should return true if the target is in range", function() {
-      enemy = new Unit("idle", {x:3, y:1}, map);
+      enemy = new Unit({x:3, y:1}, map);
       unit.setTarget(enemy);
       expect(unit.pointRangeCheck("x")).toBe(true);
       expect(unit.pointRangeCheck("y")).toBe(true);
@@ -37,7 +37,7 @@ describe("Unit", function() {
     });
 
     it("should return false if the target is not in range and a point is negative", function() {
-      enemy = new Unit("idle", {x:1, y:-1}, map);
+      enemy = new Unit({x:1, y:-1}, map);
       unit.setTarget(enemy);
       expect(unit.pointRangeCheck("x")).toBe(true);
       expect(unit.pointRangeCheck("y")).toBe(false);
@@ -50,7 +50,7 @@ describe("Unit", function() {
 
     beforeEach(function() {
       map = new GameMap();
-      unit = new Unit("idle", {x:0, y:0}, map);
+      unit = new Unit({x:0, y:0}, map);
     });
     
     it("should be able to move if state is not dead", function() {
@@ -109,8 +109,8 @@ describe("Unit", function() {
 
     beforeEach(function() {
       map = new GameMap();
-      unit = new Unit("idle", {x:0, y:0}, map);
-      enemy = new Unit("idle", {x:1, y:0}, map);
+      unit = new Unit({x:0, y:0}, map);
+      enemy = new Unit({x:1, y:0}, map);
     });
 
     it("should attack an adjacent enemy succesfully", function() {

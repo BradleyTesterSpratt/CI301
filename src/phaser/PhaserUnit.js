@@ -1,9 +1,10 @@
 class PhaserUnit {
-  constructor(game, position) {
+  constructor(game, position, colour) {
     this.unit = new UnitClass(position, game.map);
-    // this.unit.speed = 20;
-    this.body = game.add.sprite(position.x, position.y, 'unit');
-    this.body.tint = Constants.colour.blue; 
+    const body = game.add.sprite(position.x, position.y, 'unit');
+    body.setOrigin(0.5, 0.5);
+    this.body = body;
+    this.body.tint = colour; 
   }
 
   update() {

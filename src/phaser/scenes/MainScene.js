@@ -10,19 +10,15 @@ class MainScene extends Phaser.Scene {
   create() {
     this.map = new GameMapClass();
     this.pointer = this.input.activePointer;
-    this.player = new PhaserUnit(this, {x:400, y:400});
-    // this.gameInput = new Input(this);
-    // this.gameInput.leftClick(function() {
-      // this.player.setPointer(this.pointer.worldX, this.pointer.worldY);
-    // this.input.setPollAlways();
-    // });
+    this.player = new PhaserUnit(this, {x:400, y:400}, Constants.colour.blue);
+    this.enemy = new PhaserUnit(this, {x:600, y:600}, Constants.colour.red);
     this.input.on('pointerdown', function (pointer) {
       this.player.setPointer(pointer.x, pointer.y);
     }, this);
   }
 
   update() {
-    // this.gameInput.update();
     this.player.update();
+    this.map.updateOccupiedTerrain();
   }
 }

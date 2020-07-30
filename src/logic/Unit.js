@@ -10,6 +10,7 @@ function Unit(position, map) {
   this.range = 1;
   this.attackPower = 1;
   this.target;
+  this.size = 64;
   //give unit a reference to the map it is on for checking terrain
   map.addUnit(this);
   this.map = map;

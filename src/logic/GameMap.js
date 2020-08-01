@@ -26,7 +26,17 @@ GameMap.prototype.getTerrainByPosition = function(position) {
       terrain = entry;
     };
   });
-  return terrain != null ? terrain : null;
+  return terrain;
+}
+
+GameMap.prototype.findUnitByPosition = function(position) {
+  var unit = null;
+  this.unitList.forEach(entry => {
+    if(entry.position.x == position.x && entry.position.y == position.y) {
+      unit = entry;
+    };
+  });
+  return unit;
 }
 
 GameMap.prototype.updateOccupiedTerrain = function() {

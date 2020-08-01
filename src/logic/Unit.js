@@ -42,7 +42,11 @@ Unit.prototype.setTarget = function(target) {
 }
 
 Unit.prototype.queueAction = function(action) {
-  this.actionQueue.push(action);
+  //change this so that actions queue underneath a take damage action
+  if(this.state == "underAttack") {
+    var queuePosition = this.actionQueue.length - this.actionQueue.filter(x => x==="injured").length;
+    this.actionQueue.splice(queuePosition, 0, action);
+  } else this.actionQueue.push(action);
 }
 
 Unit.prototype.performAction = function() {
@@ -62,7 +66,7 @@ Unit.prototype.performAction = function() {
       default:
         break;
     }
-  }
+  } else this.state = "idle";
 }
 
 Unit.prototype.pointRangeCheck = function(point) {
@@ -144,8 +148,13 @@ Unit.prototype.attack = function() {
 }
 
 Unit.prototype.receieveAttack = function(attackPower) {
-  this.state = "underAttack";
-  this.currentHP = this.currentHP - attackPower;
+  if(this.state != "underAttack") {
+    this.state = "underAttack";
+    this.currentHP = this.currentHP - attackPower;
+    for(i=0; i < 3; i++) {
+      this.queueAction("injured");
+    }
+  }
 }
 
 module.exports = Unit;

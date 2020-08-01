@@ -6,7 +6,6 @@ class PhaserUnit {
     body.setScale(0.5, 0.5);
     this.body = body;
     this.body.tint = colour; 
-    console.log(this.unit.position);
   }
 
   update() {

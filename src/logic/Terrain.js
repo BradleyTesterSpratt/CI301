@@ -11,12 +11,12 @@ function Terrain(position, traversable = true) {
 
 Terrain.prototype.occupy = function(unitID) {
   this.occupied = true;
-  this.occupied = unitID;
+  this.occupier = unitID;
 }
 
 Terrain.prototype.vacate = function(unitID) {
   this.occupied = false;
-  this.occupied = null;
+  this.occupier = null;
 }
 
 module.exports = Terrain;

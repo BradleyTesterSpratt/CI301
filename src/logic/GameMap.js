@@ -36,7 +36,7 @@ GameMap.prototype.updateOccupiedTerrain = function() {
   this.unitList.forEach(unit => {
     var posX = unit.position.x;
     var posY = unit.position.y;
-    this.occupyTerrain(unit.id, {posX, posY});
+    this.occupyTerrain(unit.id, {x: posX, y: posY});
   });
 }
 

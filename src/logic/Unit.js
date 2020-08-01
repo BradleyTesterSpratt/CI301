@@ -25,6 +25,7 @@ Unit.prototype.setState = function(state) {
 Unit.prototype.setDestination = function(position) {
   if(this.state != "dead") {
     if(this.position != position) {
+      if(this.state != "closingDistance") {this.clearQueue();}
       if(this.debug) {console.log(`destination is now ${JSON.stringify(this.destination)}`)};
       this.destination = position;
       this.queueAction("move");
@@ -35,6 +36,7 @@ Unit.prototype.setDestination = function(position) {
 Unit.prototype.setTarget = function(target) {
   if(this.state != "dead") {
     if(target.state != "dead") {
+      this.clearQueue();
       this.target = target;
       this.queueAction("rangeCheck");
     }
@@ -93,6 +95,15 @@ Unit.prototype.inRange = function() {
   return (xInRange && yInRange);
 }
 
+
+Unit.prototype.clearQueue = function() {
+  var injuries = this.actionQueue.filter(x => x==="injured").length;
+  this.actionQueue = [];
+  for(i = 0; i < injuries; i++) {
+    this.queueAction("injured");
+  }
+}
+
 /**
  * actions
  */
@@ -113,15 +124,15 @@ Unit.prototype.move = function() {
     if(this.state != "closingDistance") {
       this.state = "moving";
       this.queueAction("move");
-    }
-  } else if(this.state == "closingDistance") {
-    if(this.target.position == this.destination) {
-      this.queueAction("move");
+    } else if(this.state == "closingDistance") {
+      if(!this.inRange()) {
+        this.queueAction("move");
+      } else {
+        this.state = "attacking";
+      }
     } else {
-      this.state = "attacking";
+      this.state = "idle";
     }
-  } else {
-    this.state = "idle";
   }
 }
 
@@ -156,6 +167,11 @@ Unit.prototype.receieveAttack = function(attackPower) {
     }
   }
 }
+
+// Unit.prototype.kill = function() {
+//   // this.map.unitList
+//   this = null;
+// }
 
 module.exports = Unit;
 global.UnitClass = Unit;

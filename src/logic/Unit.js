@@ -130,9 +130,9 @@ Unit.prototype.move = function() {
       } else {
         this.state = "attacking";
       }
-    } else {
-      this.state = "idle";
     }
+  } else {
+    this.state = "idle";
   }
 }
 

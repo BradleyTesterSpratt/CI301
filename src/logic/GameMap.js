@@ -26,7 +26,17 @@ GameMap.prototype.getTerrainByPosition = function(position) {
       terrain = entry;
     };
   });
-  return terrain != null ? terrain : null;
+  return terrain;
+}
+
+GameMap.prototype.findUnitByPosition = function(position) {
+  var unit = null;
+  this.unitList.forEach(entry => {
+    if(entry.position.x == position.x && entry.position.y == position.y) {
+      unit = entry;
+    };
+  });
+  return unit;
 }
 
 GameMap.prototype.updateOccupiedTerrain = function() {
@@ -34,16 +44,23 @@ GameMap.prototype.updateOccupiedTerrain = function() {
     terrain.vacate();
   });
   this.unitList.forEach(unit => {
-    var terrain = this.getTerrainByPosition(unit.position);
-    if(terrain != null) {
-      terrain.occupy();
-    } else {
-      terrain = new Terrain(unit.position);
-      this.addTerrain(terrain);
-      terrain.occupy();
-    }
+    var posX = unit.position.x;
+    var posY = unit.position.y;
+    this.occupyTerrain(unit.id, {x: posX, y: posY});
   });
 }
+
+GameMap.prototype.occupyTerrain = function(unitID, position) {
+  var terrain = this.getTerrainByPosition(position);
+  if(terrain != null) {
+    terrain.occupy(unitID);
+  } else {
+    terrain = new Terrain(position);
+    this.addTerrain(terrain);
+    terrain.occupy(unitID);
+  }
+}
+
 // GameMap.prototype.addChildMap = function(map) {
 //   this.childMaps.push(map);
 // }

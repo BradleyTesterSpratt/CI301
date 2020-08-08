@@ -1,4 +1,4 @@
-# CI301
+# CI301 - GOAP game
 
 # to run automated tests
 - make init

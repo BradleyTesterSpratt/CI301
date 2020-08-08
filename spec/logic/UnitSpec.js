@@ -138,15 +138,19 @@ describe("Unit", function() {
       unit.setTarget(enemy);
       updateAll();
       expect(unit.state).toBe("closingDistance");
+      expect(enemy.state).not.toBe("underAttack");
       expect(enemy).not.toBeDamaged();
       updateAll();
       expect(enemy).not.toBeDamaged();
-      expect(unit.state).toBe("closingDistance");
+      expect(enemy.state).not.toBe("underAttack");
+      expect(unit.state).toBe("attacking");
       updateAll();
       expect(enemy).not.toBeDamaged();
+      expect(enemy.state).not.toBe("underAttack");
       expect(unit.state).toBe("attacking");
       updateAll();
       expect(enemy).toBeDamaged();
+      expect(unit.state).toBe("attacking");
       expect(enemy.state).toBe("underAttack");
     });
 
@@ -162,6 +166,18 @@ describe("Unit", function() {
       expect(enemy.currentHP).toBe(4);
       expect(unit.state).toBe("attacking");
       updateAll();
+      expect(enemy.currentHP).toBe(4);
+      expect(unit.state).toBe("attacking");
+      updateAll();
+      expect(enemy.currentHP).toBe(4);
+      expect(unit.state).toBe("attacking");
+      updateAll();
+      expect(enemy.currentHP).toBe(3);
+      expect(unit.state).toBe("attacking");
+      updateAll();
+      expect(enemy.currentHP).toBe(3);
+      expect(unit.state).toBe("attacking");
+      updateAll();
       expect(enemy.currentHP).toBe(3);
       expect(unit.state).toBe("attacking");
       updateAll();
@@ -172,6 +188,18 @@ describe("Unit", function() {
       expect(unit.state).toBe("attacking");
       updateAll();
       expect(enemy.currentHP).toBe(2);
+      expect(unit.state).toBe("attacking");
+      updateAll();
+      expect(enemy.currentHP).toBe(2);
+      expect(unit.state).toBe("attacking");
+      updateAll();
+      expect(enemy.currentHP).toBe(2);
+      expect(unit.state).toBe("attacking");
+      updateAll();
+      expect(enemy.currentHP).toBe(1);
+      expect(unit.state).toBe("attacking");
+      updateAll();
+      expect(enemy.currentHP).toBe(1);
       expect(unit.state).toBe("attacking");
       updateAll();
       expect(enemy.currentHP).toBe(1);
@@ -186,9 +214,10 @@ describe("Unit", function() {
     });
 
     it("should travel to the enemy's new position and attack if the enemy moves", function() {
+      enemy.position = ({x:2, y:0});
       unit.setTarget(enemy);
       updateAll();
-      expect(unit).toBeInRange();
+      expect(unit).not.toBeInRange();
       enemy.setDestination({x:4, y:2});
       updateAll();
       expect(unit).not.toBeInRange();
@@ -201,7 +230,6 @@ describe("Unit", function() {
       expect(unit).not.toBeInRange();
       updateAll();
       expect(unit).toBeInRange();
-      updateAll();
     });
     
     it("should not cause the unit to overlap the enemy", function() {

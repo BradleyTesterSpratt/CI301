@@ -32,6 +32,10 @@ Unit.prototype.setDestination = function(position) {
     if(this.position != position) {
       if(this.state != "closingDistance") {this.clearQueue();}
       if(this.debug) {console.log(`destination is now ${JSON.stringify(this.destination)}`)};
+      if(position.x < 0) position.x = 0;
+      if(position.y < 0) position.y = 0;
+      if(position.x > this.map.grid.length) position.x = this.map.grid.length;
+      if(position.y > this.map.grid.length) position.y = this.map.grid.length;
       this.destination = position;
       this.queueAction("move");
       this.path = this.finder.findPath(this.position.x, this.position.y, this.destination.x, this.destination.y, this.map.grid);

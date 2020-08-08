@@ -3,12 +3,8 @@ function Terrain(grid, position, traversable = true) {
   this.cover = 0;
   this.traversable = traversable;
   this.position = position;
-  this.grid.setWalkableAt(this.position.x, this.position.y, traversable);
+  grid.setWalkableAt(this.position.x, this.position.y, traversable);
   this.occupied = false;
-  this.occupier = null;
-  // something like this for player maps?
-  // this.visible = false;
-  // this.revelead = false;
 }
 
 Terrain.prototype.occupy = function(unitID) {

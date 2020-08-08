@@ -8,7 +8,7 @@ class MainScene extends Phaser.Scene {
   }
 
   create() {
-    this.map = new GameMapClass(13, 13);
+    this.map = new GameMapClass(25, 25);
     this.pointer = this.input.activePointer;
     this.player = new PhaserUnit(this, {x:400, y:400}, Constants.colour.blue);
     this.enemy = new PhaserUnit(this, {x:600, y:600}, Constants.colour.red);

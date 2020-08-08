@@ -104,6 +104,10 @@ describe("Unit", function() {
     //   expect(unit.position).not.toBe({x:2, y:1});
     // });
 
+    it("should return the closest non-out of bounds position if the requested destination is out of bounds", function() {
+      unit.setDestination({x:-1, y:-1});
+      expect(unit.destination).not.toBe({x:-1, y:-1});
+    });
   });
 
   describe("attack", function() {

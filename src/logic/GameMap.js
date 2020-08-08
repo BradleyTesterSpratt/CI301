@@ -44,14 +44,12 @@ GameMap.prototype.updateOccupiedTerrain = function() {
   this.terrainList.forEach(terrain => {
     if(terrain.occupied) {
       terrain.vacate();
-      this.grid.setWalkableAt(terrain.position.x, terrain.position.y, true);
     }
   });
   this.unitList.forEach(unit => {
     var posX = unit.position.x;
     var posY = unit.position.y;
     this.occupyTerrain(unit.id, {x: posX, y: posY});
-    this.grid.setWalkableAt(posX, posY, false);
   });
 }
 
@@ -65,25 +63,6 @@ GameMap.prototype.occupyTerrain = function(unitID, position) {
     terrain.occupy(unitID);
   }
 }
-
-// GameMap.prototype.addChildMap = function(map) {
-//   this.childMaps.push(map);
-// }
-
-// GameMap.prototype.updateChildMaps = function(terrain, action) {
-//   this.childMaps.forEach(map => {
-//     // remove the terrain from the list
-//     // or add a copy of a new terrain to the list
-//   });
-// }
-
-// something like this for each team/player
-// function PlayerMap(map) {
-//   map.addChildMap(this); 
-//   this.terrainList = []
-//   for each terrain in the map.terrainList add a copy;
-
-// }
 
 module.exports = GameMap;
 global.GameMapClass = GameMap;

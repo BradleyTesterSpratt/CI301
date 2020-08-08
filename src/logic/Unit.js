@@ -1,3 +1,5 @@
+const pf = require('pathfinding');
+
 function Unit(position, map) {
   this.id;
   this.state = "idle";
@@ -10,7 +12,10 @@ function Unit(position, map) {
   this.range = 1;
   this.attackPower = 1;
   this.target;
-  this.size = 64;
+  this.finder = new pf.AStarFinder({
+    allowDiagonal: true
+  });
+  this.path;
   //give unit a reference to the map it is on for checking terrain
   map.addUnit(this);
   this.map = map;
@@ -29,6 +34,7 @@ Unit.prototype.setDestination = function(position) {
       if(this.debug) {console.log(`destination is now ${JSON.stringify(this.destination)}`)};
       this.destination = position;
       this.queueAction("move");
+      this.path = this.finder.findPath(this.position.x, this.position.y, this.destination.x, this.destination.y, this.map.grid);
     }
   }
 }

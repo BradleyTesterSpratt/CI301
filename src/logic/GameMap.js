@@ -1,9 +1,10 @@
 const Terrain = require("./Terrain");
+const pf = require('pathfinding');
 
-function GameMap() {
+function GameMap(width, height) {
   this.terrainList = [];
   this.unitList = [];
-  // this.childMaps = [];
+  this.grid = new pf.Grid(width, height);
 }
 
 GameMap.prototype.addTerrain = function(terrain) {
@@ -41,12 +42,16 @@ GameMap.prototype.findUnitByPosition = function(position) {
 
 GameMap.prototype.updateOccupiedTerrain = function() {
   this.terrainList.forEach(terrain => {
-    terrain.vacate();
+    if(terrain.occupied) {
+      terrain.vacate();
+      this.grid.setWalkableAt(terrain.position.x, terrain.position.y, true);
+    }
   });
   this.unitList.forEach(unit => {
     var posX = unit.position.x;
     var posY = unit.position.y;
     this.occupyTerrain(unit.id, {x: posX, y: posY});
+    this.grid.setWalkableAt(posX, posY, false);
   });
 }
 
@@ -55,7 +60,7 @@ GameMap.prototype.occupyTerrain = function(unitID, position) {
   if(terrain != null) {
     terrain.occupy(unitID);
   } else {
-    terrain = new Terrain(position);
+    terrain = new Terrain(this.grid, position);
     this.addTerrain(terrain);
     terrain.occupy(unitID);
   }

@@ -16,7 +16,7 @@ describe("Unit", function() {
 
   describe("pointRangeCheck", function() {
     beforeEach(function() {
-      map = new GameMap();
+      map = new GameMap(13,13);
       unit = new Unit({x:2, y:1}, map);
     });
 
@@ -49,7 +49,7 @@ describe("Unit", function() {
   describe("setDestination", function() {
 
     beforeEach(function() {
-      map = new GameMap();
+      map = new GameMap(13,13);
       unit = new Unit({x:0, y:0}, map);
     });
     
@@ -79,36 +79,37 @@ describe("Unit", function() {
     });
 
     it("should not be able to traverse an impassible space", function() {
-      map.addTerrain(new Terrain({x:-1, y:-1}, false));
-      unit.setDestination({x:-1, y:-1});
+      map.addTerrain(new Terrain(map.grid, {x:1, y:1}, false));
+      unit.setDestination({x:1, y:1});
       updateAll();
-      expect(unit.position).not.toEqual({x:-1, y:-1});
+      expect(unit.position).not.toEqual({x:1, y:1});
     });
 
-    it("should be able to move to a negative position", function() {
-      unit.position = {x:2, y:1};
-      updateAll();
-      unit.setDestination({x:-1, y:-1});
-      updateAll();
-      expect(unit.position).not.toEqual({x:-1, y:-1});
-      updateAll();
-      expect(unit.position).toEqual({x:-1, y:-1});
-    });
+    // pathfinding doesn't support negative positions
+    // it("should be able to move to a negative position", function() {
+    //   unit.position = {x:2, y:1};
+    //   updateAll();
+    //   unit.setDestination({x:-1, y:-1});
+    //   updateAll();
+    //   expect(unit.position).not.toEqual({x:-1, y:-1});
+    //   updateAll();
+    //   expect(unit.position).toEqual({x:-1, y:-1});
+    // });
 
-    it("should not be confused when moving between adjacent positive and negative positions", function() {
-      unit.position = {x:2, y:1};
-      updateAll();
-      unit.setDestination({x:1, y:-1});
-      updateAll();
-      expect(unit.position).not.toBe({x:2, y:1});
-    });
+    // it("should not be confused when moving between adjacent positive and negative positions", function() {
+    //   unit.position = {x:2, y:1};
+    //   updateAll();
+    //   unit.setDestination({x:1, y:-1});
+    //   updateAll();
+    //   expect(unit.position).not.toBe({x:2, y:1});
+    // });
 
   });
 
   describe("attack", function() {
 
     beforeEach(function() {
-      map = new GameMap();
+      map = new GameMap(13,13);
       unit = new Unit({x:0, y:0}, map);
       enemy = new Unit({x:1, y:0}, map);
     });
@@ -223,7 +224,7 @@ describe("Unit", function() {
       expect(unit).not.toBeInRange();
       updateAll();
       expect(unit).not.toBeInRange();
-      enemy.setDestination({x:1, y:-1});
+      enemy.setDestination({x:1, y:0});
       updateAll();
       expect(unit).not.toBeInRange();
       updateAll();

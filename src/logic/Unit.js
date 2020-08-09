@@ -172,7 +172,7 @@ Unit.prototype.rangeCheck = function() {
 Unit.prototype.attack = function() {
   this.target.receieveAttack(this.attackPower);
   if(this.target.currentHP > 0) {
-    if(this.debug) {console.log(this.target.currentHP)};
+    if(this.debug) console.log(this.target.currentHP);
     this.queueAction("rangeCheck");
   } else {
     this.target = null;

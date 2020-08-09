@@ -1,0 +1,42 @@
+<!doctype html> 
+<html lang="en"> 
+<head> 
+	<meta charset="UTF-8" />
+	<title>GOAP Game</title>
+
+    <script type="text/javascript" src="libs/phaser.min.js"></script>
+        
+    <!-- Load user files -->
+    <script src="src/phaser/PhaserUnit.js"></script>
+    <script src="src/phaser/Systems.js"></script>
+    <script src="src/phaser/scenes/MainScene.js"></script>
+    <script src="libs/bundle.js"></script>
+
+    <!-- Remove borders around the game window -->
+    <style type="text/css">
+        body {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Define entry point -->
+<script type="text/javascript">
+    const config = {
+        type: Phaser.AUTO,
+        width: 800,
+        height: 800,
+        parent: 'phaser',
+        scene: [
+            MainScene,
+        ]
+    };
+
+    window.onload = function(event) {
+        var game = new Phaser.Game(config);
+    };
+</script>
+
+</body>
+</html>

@@ -1,13 +1,13 @@
 describe("GameMap", function() {
-  var GameMap = require('../lib/GameMap');
-  var Terrain = require('../lib/Terrain');
+  var GameMap = require('../../src/logic/GameMap');
+  var Terrain = require('../../src/logic/Terrain');
   var map;
   var terrain;
 
   describe("addTerrain", function() {
     beforeEach(function() {
-      map = new GameMap();
-      terrain = new Terrain({x:2, y:2});
+      map = new GameMap(13,13);
+      terrain = new Terrain(map.grid, {x:2, y:2});
     });
 
     it("should add the new terrain to the terrainList" , function() {
@@ -18,8 +18,8 @@ describe("GameMap", function() {
 
   describe("getTerrainByPosition", function() {
     beforeEach(function() {
-      map = new GameMap();
-      terrain = new Terrain({x:2, y:2});
+      map = new GameMap(13,13);
+      terrain = new Terrain(map.grid, {x:2, y:2});
     });
 
     it("should find the terrain if there is an terrain at that position in the terrainList" , function() {

@@ -3,7 +3,7 @@ class PhaserUnit {
     this.game = game;
     this.unit = new UnitClass(this.getAdjustedPosition(position.x, position.y), this.game.map);
     const body = game.add.sprite(position.x, position.y, 'unit');
-    body.setOrigin(0.5, 0.5);
+    // body.setOrigin(0.5, 0.5);
     body.setScale(0.5, 0.5);
     this.body = body;
     this.body.tint = colour; 

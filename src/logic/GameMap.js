@@ -1,9 +1,10 @@
 const Terrain = require("./Terrain");
+const pf = require('pathfinding');
 
-function GameMap() {
+function GameMap(width, height) {
   this.terrainList = [];
   this.unitList = [];
-  // this.childMaps = [];
+  this.grid = new pf.Grid(width, height);
 }
 
 GameMap.prototype.addTerrain = function(terrain) {
@@ -41,7 +42,9 @@ GameMap.prototype.findUnitByPosition = function(position) {
 
 GameMap.prototype.updateOccupiedTerrain = function() {
   this.terrainList.forEach(terrain => {
-    terrain.vacate();
+    if(terrain.occupied) {
+      terrain.vacate();
+    }
   });
   this.unitList.forEach(unit => {
     var posX = unit.position.x;
@@ -55,30 +58,11 @@ GameMap.prototype.occupyTerrain = function(unitID, position) {
   if(terrain != null) {
     terrain.occupy(unitID);
   } else {
-    terrain = new Terrain(position);
+    terrain = new Terrain(this.grid, position);
     this.addTerrain(terrain);
     terrain.occupy(unitID);
   }
 }
-
-// GameMap.prototype.addChildMap = function(map) {
-//   this.childMaps.push(map);
-// }
-
-// GameMap.prototype.updateChildMaps = function(terrain, action) {
-//   this.childMaps.forEach(map => {
-//     // remove the terrain from the list
-//     // or add a copy of a new terrain to the list
-//   });
-// }
-
-// something like this for each team/player
-// function PlayerMap(map) {
-//   map.addChildMap(this); 
-//   this.terrainList = []
-//   for each terrain in the map.terrainList add a copy;
-
-// }
 
 module.exports = GameMap;
 global.GameMapClass = GameMap;

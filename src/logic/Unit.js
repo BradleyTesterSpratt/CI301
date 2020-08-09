@@ -1,3 +1,5 @@
+const pf = require('pathfinding');
+
 function Unit(position, map) {
   this.id;
   this.state = "idle";
@@ -10,7 +12,7 @@ function Unit(position, map) {
   this.range = 1;
   this.attackPower = 1;
   this.target;
-  this.size = 64;
+  this.path;
   //give unit a reference to the map it is on for checking terrain
   map.addUnit(this);
   this.map = map;
@@ -27,10 +29,23 @@ Unit.prototype.setDestination = function(position) {
     if(this.position != position) {
       if(this.state != "closingDistance") {this.clearQueue();}
       if(this.debug) {console.log(`destination is now ${JSON.stringify(this.destination)}`)};
+      if(position.x < 0) position.x = 0;
+      if(position.y < 0) position.y = 0;
+      if(position.x > this.map.grid.length) position.x = this.map.grid.length - 1;
+      if(position.y > this.map.grid.length) position.y = this.map.grid.length - 1;
       this.destination = position;
+      this.path = this.setPath(this.position.x, this.position.y, this.destination.x, this.destination.y)
       this.queueAction("move");
     }
   }
+}
+
+Unit.prototype.setPath = function(cX, cY, dX, dY, grid = this.map.grid.clone()) {
+  var finder = new pf.AStarFinder({
+    allowDiagonal: true
+  });
+  newPath = finder.findPath(cX, cY, dX, dY, grid);
+  return newPath;
 }
 
 Unit.prototype.setTarget = function(target) {
@@ -111,13 +126,13 @@ Unit.prototype.clearQueue = function() {
 Unit.prototype.move = function() {
   movementAllowence = this.speed;
   for (i=0; movementAllowence > i; i++) {
+    var nextPosition = this.path.shift();
     var newPosition = {x:null, y:null};
-    newPosition.x = this.position.x + Math.sign(this.destination.x - this.position.x);
-    newPosition.y = this.position.y + Math.sign(this.destination.y - this.position.y);
-    var terrain = this.map.getTerrainByPosition(newPosition)
-    if(terrain == null || (terrain.traversable && !terrain.occupied)) {
+    if(nextPosition != null) {
+      newPosition.x = nextPosition[0];
+      newPosition.y = nextPosition[1];
       this.position = newPosition;
-    };
+    }
   };
   if(this.position.x != this.destination.x || this.position.y != this.destination.y) {
     //replace with a state machine or function?
@@ -143,7 +158,14 @@ Unit.prototype.rangeCheck = function() {
   } else {
     this.queueAction("rangeCheck");
     this.state = "closingDistance";
-    this.setDestination(this.target.position);
+    //set up a temporary copy of the frid that has the target reachable
+    var tempGrid = this.map.grid.clone();
+    tempGrid.setWalkableAt(this.target.position.x, this.target.position.y, true);
+    var newPath = this.setPath(this.position.x, this.position.y, this.target.position.x, this.target.position.y, tempGrid);
+    //get the position closest to the target
+    var neighborPos = newPath.reverse()[1];
+    var newTargetPos = {x: neighborPos[0], y: neighborPos[1]};
+    this.setDestination(newTargetPos);
   }
 }
 

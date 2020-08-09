@@ -25,9 +25,9 @@ beforeEach(function () {
           var result = {};
           result.pass = unit.pointRangeCheck("x") && unit.pointRangeCheck("y");
           if(result.pass) {
-            result.message = "Expected Unit at {x: "+ actual.position.x + ", y: " + actual.position.y + "} is in range of {x: " + actual.target.position.x + ", y: " + actual.target.position.y + "}";
+            result.message = "Expected Unit at {x: "+ actual.position.x + ", y: " + actual.position.y + "} is in range of Targetted unit at {x: " + actual.target.position.x + ", y: " + actual.target.position.y + "}";
           } else {
-            result.message = "Expected Unit at {x: "+ actual.position.x + ", y: " + actual.position.y + "} is not in range of {x: " + actual.target.position.x + ", y: " + actual.target.position.y + "}";
+            result.message = "Expected Unit at {x: "+ actual.position.x + ", y: " + actual.position.y + "} is not in range of Targetted unit at {x: " + actual.target.position.x + ", y: " + actual.target.position.y + "}";
           };
 
           return result;

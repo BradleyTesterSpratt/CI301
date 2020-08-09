@@ -148,7 +148,7 @@ describe("Unit", function() {
       updateAll();
       expect(enemy).not.toBeDamaged();
       expect(enemy.state).not.toBe("underAttack");
-      expect(unit.state).toBe("attacking");
+      expect(unit.state).toBe("idle");
       updateAll();
       expect(enemy).not.toBeDamaged();
       expect(enemy.state).not.toBe("underAttack");

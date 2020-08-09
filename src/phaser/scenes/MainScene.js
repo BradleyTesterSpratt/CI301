@@ -20,9 +20,9 @@ class MainScene extends Phaser.Scene {
   }
 
   update() {
-    this.map.updateOccupiedTerrain();
     this.units.forEach(unit => {
       unit.update();
+      this.map.updateOccupiedTerrain();
     });
     if(this.updateTimer == 0) {
       this.units.forEach(unit => {

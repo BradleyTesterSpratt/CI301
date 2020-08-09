@@ -10,13 +10,13 @@ function Terrain(grid, position, traversable = true) {
 Terrain.prototype.occupy = function(unitID) {
   this.occupied = true;
   this.occupier = unitID;
-  this.grid.setWalkableAt(this.position.x, this.position.y, true);
+  this.grid.setWalkableAt(this.position.x, this.position.y, false);
 }
 
 Terrain.prototype.vacate = function() {
   this.occupied = false;
   this.occupier = null;
-  this.grid.setWalkableAt(this.position.x, this.position.y, false);
+  this.grid.setWalkableAt(this.position.x, this.position.y, true);
 }
 
 module.exports = Terrain;

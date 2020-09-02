@@ -1,11 +1,11 @@
 const pf = require('pathfinding');
+const Action = require("./GOAP/Action");
 
 function Unit(position, map) {
   this.id;
-  this.state = "idle";
+  this.alive = true;
   this.position = position;
   this.speed = 2;
-  this.actionQueue = [];
   this.destination;
   this.health = 5;
   this.currentHP = this.health;
@@ -13,77 +13,69 @@ function Unit(position, map) {
   this.attackPower = 1;
   this.target;
   this.path;
-  //give unit a reference to the map it is on for checking terrain
   map.addUnit(this);
   this.map = map;
-  //set this to true in test suite for debug output
+  //actions for goap
+  this.actionList = [
+    new Action("attack enemy", [this.inRange(), this.target.currentHP > 0], [this.target.currentHP <= 0]),
+    new Action("close distance", [!this.inRange()], [this.inRange() == true]),
+    new Action(
+      "move to",
+      [this.position != this.destination],
+      [this.position == this.destination],
+      this.newPath(this.position.x, this.position.y, this.target.position.x, this.target.position.y, tempGrid).length
+    )
+    // new Action("target enemy at", [this.alive], this.setTarget(position)),
+    // new Action("set destination to", [this.alive], this.setDestination(position))
+  ];
+  this.goal = null;
+  this.actionQueue = [];
   this.debug = false;
 }
 
-Unit.prototype.setState = function(state) {
-  this.state = state;
+Unit.prototype.setDestination =function(position) {
+  if(position.x < 0) position.x = 0;
+  if(position.y < 0) position.y = 0;
+  if(position.x > this.map.grid.length) position.x = this.map.grid.length - 1;
+  if(position.y > this.map.grid.length) position.y = this.map.grid.length - 1;
+  this.destination = position;
+  this.goal = function() {this.position == this.destination};
 }
 
-Unit.prototype.setDestination = function(position) {
-  if(this.state != "dead") {
-    if(this.position != position) {
-      if(this.state != "closingDistance") {this.clearQueue();}
-      if(this.debug) {console.log(`destination is now ${JSON.stringify(this.destination)}`)};
-      if(position.x < 0) position.x = 0;
-      if(position.y < 0) position.y = 0;
-      if(position.x > this.map.grid.length) position.x = this.map.grid.length - 1;
-      if(position.y > this.map.grid.length) position.y = this.map.grid.length - 1;
-      this.destination = position;
-      this.path = this.setPath(this.position.x, this.position.y, this.destination.x, this.destination.y)
-      this.queueAction("move");
-    }
-  }
-}
-
-Unit.prototype.setPath = function(cX, cY, dX, dY, grid = this.map.grid.clone()) {
+Unit.prototype.newPath = function(cX, cY, dX, dY, grid = this.map.grid.clone()) {
   var finder = new pf.AStarFinder({
     allowDiagonal: true
   });
-  newPath = finder.findPath(cX, cY, dX, dY, grid);
-  return newPath;
+  return finder.findPath(cX, cY, dX, dY, grid);;
 }
 
 Unit.prototype.setTarget = function(target) {
-  if(this.state != "dead") {
-    if(target.state != "dead") {
-      this.clearQueue();
-      this.target = target;
-      this.queueAction("rangeCheck");
-    }
-  }
+  this.target = target;
+  this.goal = function() {this.target.currentHp <= 0};
 }
 
-Unit.prototype.queueAction = function(action) {
-  //change this so that actions queue underneath a take damage action
-  if(this.state == "underAttack") {
-    var queuePosition = this.actionQueue.length - this.actionQueue.filter(x => x==="injured").length;
-    this.actionQueue.splice(queuePosition, 0, action);
-  } else this.actionQueue.push(action);
+Unit.prototype.queueAction = function(action, queue = this.actionQueue) {
+  queue.push(action);
 }
 
 Unit.prototype.performAction = function() {
   if(this.actionQueue.length > 0) {
     action = this.actionQueue.pop()
-  if(this.debug) console.log("unit " + this.id + " position x: " + this.position.x + ", " + this.position.y + "\n" + "action to perform: " + action);
-    switch (action) {
-      case "move":
-        this.move();
-        break;
-      case "attack":
-        this.attack();
-        break;
-      case "rangeCheck":
-        this.rangeCheck();
-        break;
-      default:
-        break;
-    }
-  } else this.state = "idle";
+    if(this.debug) console.log("unit " + this.id + " position x: " + this.position.x + ", " + this.position.y + "\n" + "action to perform: " + action);
+      switch (action) {
+        case "move":
+          this.move();
+          break;
+        case "attack":
+          this.attack();
+          break;
+        case "rangeCheck":
+          this.rangeCheck();
+          break;
+        default:
+          break;
+      }
+  }
 }
 
 Unit.prototype.pointRangeCheck = function(point) {
@@ -110,12 +102,18 @@ Unit.prototype.inRange = function() {
   return (xInRange && yInRange);
 }
 
-
 Unit.prototype.clearQueue = function() {
-  var injuries = this.actionQueue.filter(x => x==="injured").length;
   this.actionQueue = [];
-  for(i = 0; i < injuries; i++) {
-    this.queueAction("injured");
+}
+
+Unit.prototype.populateActionQueue = function() {
+  let originalState = JSON.stringify(this);
+  let queue = [];
+  let goals = [this.goal]
+  let currentGoal = goals[goals.length-1];
+  while(!currentGoal) {
+    //foo
+    
   }
 }
 
@@ -134,21 +132,6 @@ Unit.prototype.move = function() {
       this.position = newPosition;
     }
   };
-  if(this.position.x != this.destination.x || this.position.y != this.destination.y) {
-    //replace with a state machine or function?
-    if(this.state != "closingDistance") {
-      this.state = "moving";
-      this.queueAction("move");
-    } else if(this.state == "closingDistance") {
-      if(!this.inRange()) {
-        this.queueAction("move");
-      } else {
-        this.state = "attacking";
-      }
-    }
-  } else {
-    this.state = "idle";
-  }
 }
 
 Unit.prototype.rangeCheck = function() {
@@ -158,10 +141,10 @@ Unit.prototype.rangeCheck = function() {
   } else {
     this.queueAction("rangeCheck");
     this.state = "closingDistance";
-    //set up a temporary copy of the frid that has the target reachable
+    //set up a temporary copy of the grid that has the target reachable
     var tempGrid = this.map.grid.clone();
     tempGrid.setWalkableAt(this.target.position.x, this.target.position.y, true);
-    var newPath = this.setPath(this.position.x, this.position.y, this.target.position.x, this.target.position.y, tempGrid);
+    var newPath = this.newPath(this.position.x, this.position.y, this.target.position.x, this.target.position.y, tempGrid);
     //get the position closest to the target
     var neighborPos = newPath.reverse()[1];
     var newTargetPos = {x: neighborPos[0], y: neighborPos[1]};
@@ -171,29 +154,11 @@ Unit.prototype.rangeCheck = function() {
 
 Unit.prototype.attack = function() {
   this.target.receieveAttack(this.attackPower);
-  if(this.target.currentHP > 0) {
-    if(this.debug) console.log(this.target.currentHP);
-    this.queueAction("rangeCheck");
-  } else {
-    this.target = null;
-    this.state = "idle";
-  };
 }
 
 Unit.prototype.receieveAttack = function(attackPower) {
-  if(this.state != "underAttack") {
-    this.state = "underAttack";
-    this.currentHP = this.currentHP - attackPower;
-    for(i=0; i < 3; i++) {
-      this.queueAction("injured");
-    }
-  }
+  this.currentHP = this.currentHP - attackPower;
 }
-
-// Unit.prototype.kill = function() {
-//   // this.map.unitList
-//   this = null;
-// }
 
 module.exports = Unit;
 global.UnitClass = Unit;

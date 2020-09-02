@@ -1,10 +1,10 @@
 describe("State", function() {
-  var State = require('../lib/GOAP/State');
-  var Action = require('../lib/GOAP/Action');
+  var State = require('../../src/logic/GOAP/State');
+  var Action = require('../../src/logic/GOAP/Action');
   
   var move = new Action("move", function(x1, y1, x2, y2) {return (x1 == x2 && y1 == y2);}, "idle");
   var attack = new Action("action", function() {}, "attacking");
-  var idle = new State("idle", [move, attack]);
+  var idle = new State("idle", ["move", "attack"]);
   var dead = new State("dead", []);
 
   describe("selectAction", function() {
@@ -24,7 +24,7 @@ describe("State", function() {
 });
 
 describe("Action", function() {
-  var Action = require('../lib/GOAP/Action');
+  var Action = require('../../src/logic/GOAP/Action');
 
   var move;
 
@@ -43,3 +43,17 @@ describe("Action", function() {
   });
 
 });
+
+describe("Multiple States", function() {
+  var State = require('../../src/logic/GOAP/State');
+  var Action = require('../../src/logic/GOAP/Action');
+
+  var idle = new State("idle", ["attack", "move"]);
+  var attacking = new State("attacking", ["attack"]);
+  var moving = new State("moving", ["attack"]);
+  var dead = new State("dead", []);
+
+  var attack = new Action("attack", [target.inRange, target.currentHP > 0], target.takeDamage);
+  var move = new Action("move", [position!= destination], position === destination);
+
+})

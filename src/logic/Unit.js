@@ -1,14 +1,15 @@
 const pf = require('pathfinding');
 
-function Unit(position, map) {
+function Unit(position, map, speed = 2) {
   this.id;
   this.state = "idle";
   this.position = position;
-  this.speed = 2;
+  this.speed = speed;
   this.actionQueue = [];
-  this.destination;
+  this.destination = position;
   this.health = 5;
   this.currentHP = this.health;
+  this.sight = 5;
   this.range = 1;
   this.attackPower = 1;
   this.target;
@@ -42,7 +43,8 @@ Unit.prototype.setDestination = function(position) {
 
 Unit.prototype.setPath = function(cX, cY, dX, dY, grid = this.map.grid.clone()) {
   var finder = new pf.AStarFinder({
-    allowDiagonal: true
+    allowDiagonal: true,
+    dontCrossCorners: true
   });
   newPath = finder.findPath(cX, cY, dX, dY, grid);
   return newPath;
@@ -86,16 +88,16 @@ Unit.prototype.performAction = function() {
   } else this.state = "idle";
 }
 
-Unit.prototype.pointRangeCheck = function(point) {
+Unit.prototype.pointRangeCheck = function(point, checkType, target) {
   var inRange;
   switch(point) {
     case "x": 
-      var difference = Math.abs(this.position.x - this.target.position.x);
-      inRange = (difference <= this.range);
+      var difference = Math.abs(this.position.x - target.position.x);
+      inRange = (difference <= checkType);
       break;
     case "y":
-      var difference = Math.abs(this.position.y - this.target.position.y);
-      inRange = (difference <= this.range);
+      var difference = Math.abs(this.position.y - target.position.y);
+      inRange = (difference <= checkType);
       break;
     default:
       inRange = false;
@@ -104,9 +106,9 @@ Unit.prototype.pointRangeCheck = function(point) {
   return inRange;
 }
 
-Unit.prototype.inRange = function() {
-  xInRange = this.pointRangeCheck("x");
-  yInRange = this.pointRangeCheck("y");
+Unit.prototype.inRange = function(checkType = this.range, target = this.target) {
+  xInRange = this.pointRangeCheck("x", checkType, target);
+  yInRange = this.pointRangeCheck("y", checkType, target);
   return (xInRange && yInRange);
 }
 
@@ -187,6 +189,24 @@ Unit.prototype.receieveAttack = function(attackPower) {
     for(i=0; i < 3; i++) {
       this.queueAction("injured");
     }
+  }
+}
+
+Unit.prototype.huntUnit = function(unit) {
+  if(this.target == null && this.inRange(this.sight, unit)) {
+    this.setTarget(unit);
+  } else if(!this.inRange(this.sight, unit) && this.target != null) {
+    this.target = null;
+    this.state = "idle";
+    this.setDestination(this.destination);
+  } else if(this.state == "idle") {
+  // } else if(this.state != "closingDistance" && this.state != "attacking" && this.state != "moving" || this.state == "idle") {
+    let randX = this.position.x + (Math.floor(Math.random()*5) * (Math.round(Math.random()) * 2 - 1));
+    let randY = this.position.y + (Math.floor(Math.random()*5) * (Math.round(Math.random()) * 2 - 1));
+    let newPos = {x: randX, y: randY};
+    let terrain = this.map.getTerrainByPosition(newPos)
+    if(terrain != null && terrain.traversable == true && terrain.occupied != false) this.setDestination(newPos);
+    
   }
 }
 
